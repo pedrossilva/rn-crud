@@ -6,44 +6,42 @@
  * @flow
  */
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import {Platform} from 'react-native';
+import { createBottomTabNavigator, createAppContainer } from "react-navigation";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+Ionicons.loadFonts();
+import { UsersNav } from './screens/UsersScreen'
+import { UserFormNav } from './screens/UserFormScreen'
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+const Tabs = createBottomTabNavigator(
+    {
+        New: UserFormNav,
+        List: UsersNav
+    },
+    {
+        initialRouteName: "List",
+        defaultNavigationOptions: ({ navigation }) => ({
+            tabBarIcon: ({ focused, tintColor }) => {
+                const { routeName } = navigation.state;
 
-type Props = {};
-export default class App extends Component<Props> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-      </View>
-    );
-  }
-}
+                const pfx = Platform.select({
+                    ios: 'ios-', android: 'md-'
+                });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+                const iconName = {
+                    New: `${pfx}add-circle${focused ? '' : '-outline'}`,
+                    List: `${pfx}list`
+                }[routeName];
+
+                return <Ionicons name={iconName} size={25} color={tintColor} />
+            },
+        }),
+        tabBarOptions: {
+            activeTintColor: 'tomato',
+            inactiveTintColor: 'gray',
+        },
+    }
+);
+
+export default createAppContainer(Tabs);
